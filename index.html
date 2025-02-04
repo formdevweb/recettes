@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+    <title>Latifa - Gestion de Recettes de Cuisine</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #ff1493;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        nav {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 0.7rem;
+        }
+
+        nav a {
+            color: #ff1493;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #ff1493;
+            color: #1a1a1a;
+        }
+
+        main {
+            padding: 1.5rem;
+        }
+
+        .recipe-form,
+        .recipe-list {
+            margin-top: 1.5rem;
+        }
+
+        .recipe-item {
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .recipe-item:hover {
+            transform: scale(1.02);
+        }
+
+        .recipe-item h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #ff1493;
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-item p.category {
+            font-size: 0.9rem;
+            color: #ff6f61;
+            margin: 0.5rem 0;
+        }
+
+        .recipe-details {
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .recipe-details h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #ff1493;
+            margin-bottom: 1rem;
+        }
+
+        .recipe-details ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            color: #ccc;
+            line-height: 1.8;
+        }
+
+        .recipe-details button {
+            background-color: #ff1493;
+            color: #1a1a1a;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .recipe-details button:hover {
+            background-color: #ff6f61;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.7rem;
+            margin: 0.5rem 0;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        button.add-recipe {
+            background-color: #ff1493;
+            color: #1a1a1a;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button.add-recipe:hover {
+            background-color: #ff6f61;
+        }
+
+        .recipe-details ul#detailsIngredients {
+            margin-top: 1rem;
+            color: #ff6f61;
+            /* Couleur différente pour les ingrédients */
+        }
+
+        .recipe-details ul#detailsIngredients strong {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .delete-button {
+           
+            background-color: #ff1493;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+    </style>
+
+    <header>
+        <h1>Latifa - Gestion de Recettes de Cuisine</h1>
+    </header>
+    <nav>
+        <a href="#" onclick="filterRecipes('Toutes')">Toutes</a>
+        <a href="#" onclick="filterRecipes('Entrées')">Entrées</a>
+        <a href="#" onclick="filterRecipes('Plats')">Plats</a>
+        <a href="#" onclick="filterRecipes('Desserts')">Desserts</a>
+    </nav>
+    <main>
+        <div class="recipe-form">
+            <h2>Ajouter/Modifier une Recette</h2>
+            <input type="text" id="recipeName" placeholder="Nom de la recette" />
+            <select id="recipeCategory">
+                <option value="Entrées">Entrées</option>
+                <option value="Plats">Plats</option>
+                <option value="Desserts">Desserts</option>
+            </select>
+            <textarea id="recipeIngredients" placeholder="Ingrédients (séparés par des points)"></textarea>
+            <textarea id="recipeDescription"
+                placeholder="Description de la recette (séparée par des points)"></textarea>
+            <button class="add-recipe" onclick="addOrUpdateRecipe()">Ajouter/Enregistrer</button>
+        </div>
+        <div class="recipe-list">
+            <h2>Liste des Recettes</h2>
+            <div id="recipesContainer"></div>
+        </div>
+        <div class="recipe-details" id="recipeDetails">
+            <h2 id="detailsTitle"></h2>
+            <p id="detailsCategory" class="category"></p>
+            <ul id="detailsDescription"></ul>
+            <button onclick="closeDetails()">Fermer</button>
+        </div>
+    </main>
+<script>
+    
+    let recipes = [];
+    let editingIndex = null;
+
+    function loadRecipesFromLocalStorage() {
+        const savedRecipes = localStorage.getItem('recipes');
+        if (savedRecipes) {
+            recipes = JSON.parse(savedRecipes);
+        }
+    }
+
+    function saveRecipesToLocalStorage() {
+        localStorage.setItem('recipes', JSON.stringify(recipes));
+    }
+
+    function renderRecipes(filteredCategory = 'Toutes') {
+        const container = document.getElementById('recipesContainer');
+        container.innerHTML = '';
+        const filteredRecipes = filteredCategory === 'Toutes' 
+            ? recipes 
+            : recipes.filter(recipe => recipe.category === filteredCategory);
+
+        filteredRecipes.forEach((recipe, index) => {
+            const recipeDiv = document.createElement('div');
+            recipeDiv.className = 'recipe-item';
+            recipeDiv.innerHTML = `
+                <h3>${recipe.name}</h3>
+                <p class="category"><strong>Catégorie:</strong> ${recipe.category}</p>
+                <button class="delete-button" onclick="deleteRecipe(${index})">Supprimer</button>
+            `;
+            recipeDiv.onclick = () => showDetails(index);
+            container.appendChild(recipeDiv);
+        });
+    }
+
+    function addOrUpdateRecipe() {
+        const name = document.getElementById('recipeName').value;
+        const category = document.getElementById('recipeCategory').value;
+        const ingredients = document.getElementById('recipeIngredients').value;
+        const description = document.getElementById('recipeDescription').value;
+
+        if (!name || !ingredients || !description) {
+            alert('Veuillez remplir tous les champs.');
+            return;
+        }
+
+        const recipe = {
+            name,
+            category,
+            ingredients: ingredients.split('.').filter(item => item.trim() !== ''),
+            description: description.split('.').filter(item => item.trim() !== '')
+        };
+
+        if (editingIndex !== null) {
+            recipes[editingIndex] = recipe;
+            editingIndex = null;
+        } else {
+            recipes.push(recipe);
+        }
+
+        document.getElementById('recipeName').value = '';
+        document.getElementById('recipeIngredients').value = '';
+        document.getElementById('recipeDescription').value = '';
+
+        renderRecipes();
+        saveRecipesToLocalStorage();
+    }
+
+    function showDetails(index) {
+        const recipe = recipes[index];
+        document.getElementById('detailsTitle').textContent = recipe.name;
+        document.getElementById('detailsCategory').textContent = `Catégorie: ${recipe.category}`;
+
+        const ingredientsList = document.createElement('ul');
+        ingredientsList.id = 'detailsIngredients';
+        ingredientsList.innerHTML = '<strong>Ingrédients:</strong>';
+        recipe.ingredients.forEach(ingredient => {
+            const li = document.createElement('li');
+            li.textContent = ingredient.trim();
+            ingredientsList.appendChild(li);
+        });
+
+        const descriptionList = document.getElementById('detailsDescription');
+        descriptionList.innerHTML = '';
+        descriptionList.innerHTML = '<strong>Description:</strong>';
+        recipe.description.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item.trim();
+            descriptionList.appendChild(li);
+        });
+
+        const detailsContainer = document.getElementById('recipeDetails');
+        detailsContainer.insertBefore(ingredientsList, descriptionList);
+
+        document.getElementById('recipeDetails').style.display = 'block';
+    }
+
+    function closeDetails() {
+        document.getElementById('recipeDetails').style.display = 'none';
+    }
+
+    function filterRecipes(category) {
+        renderRecipes(category);
+    }
+
+    function deleteRecipe(index) {
+        recipes.splice(index, 1);
+        renderRecipes();
+        saveRecipesToLocalStorage();
+    }
+
+    // Initial rendering
+    loadRecipesFromLocalStorage();
+    renderR
+</script>
+
+</body>
+
+</html>
